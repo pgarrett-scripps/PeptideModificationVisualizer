@@ -1,3 +1,5 @@
+from functools import partial
+
 from pyopenms import AASequence
 
 
@@ -106,3 +108,20 @@ def get_modified_peptides(peptide, static_mods, static_peptide_cterm_mods, stati
     modified_peptides = apply_variable_mods(peptide, variable_mods, variable_peptide_cterm_mods,
                                             variable_peptide_nterm_mods, max_variable_mods)
     return modified_peptides
+
+def get_modified_peptides_partial(mod_db, modification_params):
+    convert_mod_strs_into_mods = lambda mod_strs: [mod_db.getModification(" ".join(mod_str.split(" ")[:-1])) for mod_str
+                                                   in mod_strs]
+    get_modified_peptides_partial = partial(get_modified_peptides,
+                                            static_mods=convert_mod_strs_into_mods(modification_params.static_mods),
+                                            static_peptide_cterm_mods=
+                                            convert_mod_strs_into_mods(modification_params.static_peptide_cterm_mods),
+                                            static_peptide_nterm_mods=
+                                            convert_mod_strs_into_mods(modification_params.static_peptide_nterm_mods),
+                                            variable_mods=convert_mod_strs_into_mods(modification_params.variable_mods),
+                                            variable_peptide_cterm_mods=
+                                            convert_mod_strs_into_mods(modification_params.variable_peptide_cterm_mods),
+                                            variable_peptide_nterm_mods=
+                                            convert_mod_strs_into_mods(modification_params.variable_peptide_nterm_mods),
+                                            max_variable_mods=modification_params.max_variable_mods)
+    return get_modified_peptides_partial

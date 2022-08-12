@@ -9,7 +9,7 @@ from pyopenms import ModificationsDB, ProteaseDigestion, AASequence
 
 from digestion.params import get_digestion_params
 from fasta.util import load_fasta
-from modification.utils import get_modified_peptides
+from modification.utils import get_modified_peptides_partial
 from modification.params import get_modification_params
 from modification.sequon_utils import apply_sequons
 from machine_learning.utils import get_mod_and_locations
@@ -33,20 +33,7 @@ with st.expander("Digestion"):
     digestion_params = get_digestion_params()
 
 modification_params = get_modification_params(mod_db)
-convert_mod_strs_into_mods = lambda mod_strs: [mod_db.getModification(" ".join(mod_str.split(" ")[:-1])) for mod_str
-                                               in mod_strs]
-get_modified_peptides_partial = partial(get_modified_peptides,
-                                        static_mods=convert_mod_strs_into_mods(modification_params.static_mods),
-                                        static_peptide_cterm_mods=
-                                        convert_mod_strs_into_mods(modification_params.static_peptide_cterm_mods),
-                                        static_peptide_nterm_mods=
-                                        convert_mod_strs_into_mods(modification_params.static_peptide_nterm_mods),
-                                        variable_mods=convert_mod_strs_into_mods(modification_params.variable_mods),
-                                        variable_peptide_cterm_mods=
-                                        convert_mod_strs_into_mods(modification_params.variable_peptide_cterm_mods),
-                                        variable_peptide_nterm_mods=
-                                        convert_mod_strs_into_mods(modification_params.variable_peptide_nterm_mods),
-                                        max_variable_mods=modification_params.max_variable_mods)
+
 min_charge, max_charge = 1,2
 instrument_options = ["Lumos","QE","timsTOF","SciexTOF"]
 with st.expander("Deep Learning"):
@@ -60,17 +47,18 @@ with st.expander("Deep Learning"):
     if ccs_prediction or fragment_ion_prediction:
         min_charge, max_charge = st.slider("min/max charge", min_value=1, max_value=10, value=(2, 4))
 
-dig = ProteaseDigestion()
-dig.setEnzyme(digestion_params.protease)
-dig.setMissedCleavages(digestion_params.missed_cleavages)
-dig.setSpecificity({'None': 0, 'semi': 1, 'full': 2}[digestion_params.specificity])
-
 
 if st.button("Generate Spectral Library"):
     if not fasta_file:
         st.warning('Upload a FASTA file!')
     else:
         st.warning("Don't change params or close tab else the current process will be terminated.")
+
+        dig = ProteaseDigestion()
+        dig.setEnzyme(digestion_params.protease)
+        dig.setMissedCleavages(digestion_params.missed_cleavages)
+        dig.setSpecificity({'None': 0, 'semi': 1, 'full': 2}[digestion_params.specificity])
+        get_modified_peptides = get_modified_peptides_partial(mod_db, modification_params)
 
         state = st.text("Staring Spectral Library Generation...")
         my_bar = st.progress(0)
@@ -125,7 +113,6 @@ if st.button("Generate Spectral Library"):
         mod_locs = [get_mod_and_locations(seq) for seq in df['mod_sequence'].values]
         df['mods'] = [";".join(mod_loc[0]) for mod_loc in mod_locs]
         df['mod_sites'] = [";".join(mod_loc[1]) for mod_loc in mod_locs]
-
 
         with st.spinner("Running Machine Learning..."):
             model_mgr = ModelManager()
