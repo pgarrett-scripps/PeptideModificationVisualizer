@@ -5,9 +5,9 @@ import streamlit as st
 
 from pyopenms import *
 
-from mod_utils import get_modified_peptides
-from params import get_modification_params
-from sequon_utils import apply_sequons
+from modification.utils import get_modified_peptides
+from modification.params import get_modification_params
+from modification.sequon_utils import apply_sequons
 
 mod_db = ModificationsDB()
 

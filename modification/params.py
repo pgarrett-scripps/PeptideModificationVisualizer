@@ -3,9 +3,9 @@ from enum import Enum
 from typing import List, Any, Dict
 import streamlit as st
 
-from help_messages import *
-from constants import *
-from sequon_utils import parse_sequon
+from .help_messages import *
+from .constants import *
+from .sequon_utils import parse_sequon
 
 
 class TermSpecificity(Enum):
