@@ -15,6 +15,10 @@ from modification.sequon_utils import apply_sequons
 from machine_learning.utils import get_mod_and_locations
 from peptdeep.pretrained_models import ModelManager
 
+st.header("Spectral Library Generator")
+st.write("Uses pyopenms and peptdeep")
+st.write("Streamlit only allocates 1GB for public apps. To ensure that your process isnt terminated try lowering the max peptide length.")
+
 def flatten(l):
     return [item for sublist in l for item in sublist]
 
