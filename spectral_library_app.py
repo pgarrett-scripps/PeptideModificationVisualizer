@@ -82,7 +82,7 @@ if st.button("Generate Spectral Library"):
             peptides = []
             dig.digest(bsa, peptides, digestion_params.min_peptide_length, digestion_params.max_peptide_length)
             peptides = [peptide for peptide in peptides if 'X' not in peptide.toString()]
-            modified_peptides = flatten([get_modified_peptides_partial(peptide) for peptide in peptides])
+            modified_peptides = flatten([get_modified_peptides(peptide) for peptide in peptides])
             modified_peptides = [p for p in modified_peptides if apply_sequons(p, modification_params.sequons) is True]
             peptide_count += len(modified_peptides)
             for peptide in modified_peptides:
