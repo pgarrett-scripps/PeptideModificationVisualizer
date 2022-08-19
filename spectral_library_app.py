@@ -8,7 +8,7 @@ import streamlit as st
 from pyopenms import ModificationsDB, ProteaseDigestion, AASequence
 
 from digestion.params import get_digestion_params
-from fasta.util import load_fasta
+from fasta.utils import load_fasta
 from modification.utils import get_modified_peptides_partial
 from modification.params import get_modification_params
 from modification.sequon_utils import apply_sequons
@@ -18,6 +18,7 @@ from peptdeep.pretrained_models import ModelManager
 st.header("Spectral Library Generator")
 st.write("Uses pyopenms and peptdeep")
 st.write("Streamlit only allocates 1GB for public apps. To ensure that your process isnt terminated try lowering the max peptide length.")
+st.write("Intensities are outputted as a flattened list [b1_z1,b1_z2,y1_z1,y1_z2,b1_modloss_z1,b1_modloss_z2,y1_modloss_z1,y1_modloss_z2, ... ,bn_z1,bn_z2,yn_z1,yn_z2,bn_modloss_z1,bn_modloss_z2,yn_modloss_z1,yn_modloss_z2]")
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
@@ -136,13 +137,12 @@ if st.button("Generate Spectral Library"):
                 for index, row in df.iterrows():
                     flatten_intensities = np.concatenate(
                         df_intensities.iloc[row.frag_start_idx:row.frag_end_idx].values)
-                    df.loc[index, 'intensities'] = np.array2string(flatten_intensities, precision=2, separator=',',
-                                                                   suppress_small=True)
+                    df.loc[index, 'intensities'] = np.array2string(flatten_intensities, max_line_width=100_000,
+                                                                   precision=2, separator=',', suppress_small=True)
 
         st.dataframe(df)
 
         st.download_button(label="Download",
-
                            data=convert_df(df),
                            file_name=f'{Path(fasta_file.name).stem}_spectral_lib.csv',
                            mime='text/csv', )

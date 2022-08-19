@@ -12,7 +12,6 @@ def get_mod_string(sequence):
         residue = p.getResidue(i)
         mod = residue.getModificationName()
         if mod:
-            #print(residue.getOneLetterCode(), mod)
             mods.append(str(i))
             mods.append(mod)
 
@@ -21,6 +20,7 @@ def get_mod_string(sequence):
         mods.append(p.getCTerminalModificationName())
 
     return "|".join(mods)
+
 
 def get_mod_and_locations(sequence):
     p = AASequence.fromString(sequence)
@@ -34,7 +34,6 @@ def get_mod_and_locations(sequence):
         residue = p.getResidue(i)
         mod = residue.getModificationName()
         if mod:
-            #print(residue.getOneLetterCode(), mod)
             locations.append(str(i))
             mods.append(f"{mod}@{residue.getOneLetterCode()}")
 

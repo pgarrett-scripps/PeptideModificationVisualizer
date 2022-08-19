@@ -6,6 +6,7 @@ from pyopenms import ProteaseDB
 from .constants import *
 from.help_messages import *
 
+
 @dataclass
 class DigestionParams:
     missed_cleavages: int
