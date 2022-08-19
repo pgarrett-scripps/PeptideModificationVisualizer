@@ -4,3 +4,4 @@ pyopenms~=2.7.0
 setuptools~=58.0.4
 numpy~=1.21.4
 peptdeep~=0.1.4
+git+https://github.com/pgarrett-scripps/senpy.git
