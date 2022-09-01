@@ -10,7 +10,8 @@ from modification.utils import get_modified_peptides_partial
 mod_db = ModificationsDB()
 
 st.header("Visualize Peptide Modifications")
-st.write("Can help to understand the complexity which modifications add to database searches.")
+with st.expander("Help"):
+    st.write("Can help to understand the complexity which modifications add to database searches.")
 
 st.subheader("Input")
 peptide = st.text_input('Peptide Sequence', 'ARNDCEQGHILKMFPSTWYV')
@@ -26,4 +27,4 @@ modified_peptides = get_modified_peptides(peptide)
 modified_peptides = [p for p in modified_peptides if apply_sequons(p, modification_params.sequons) is True]
 data = {'peptide': [str(p) for p in modified_peptides]}
 mod_df = pd.DataFrame(data)
-st.dataframe(mod_df)
+st.table(mod_df)
